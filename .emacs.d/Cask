@@ -1,0 +1,8 @@
+(source gnu)
+(source melpa)
+
+(depends-on "auto-complete")
+(depends-on "cask")
+(depends-on "flycheck-google-cpplint")
+(depends-on "highlight-parentheses")
+(depends-on "web-mode")
