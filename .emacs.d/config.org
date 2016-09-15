@@ -1,0 +1,91 @@
+Literate org-based configuration
+
+* Package Management
+** Cask
+   I use =cask= for package management
+   #+BEGIN_SRC emacs-lisp
+     (require 'cask "~/.cask/cask.el")
+     (cask-initialize)
+   #+END_SRC
+* Packages
+** Org-Mode
+   #+BEGIN_SRC emacs-lisp
+     (require 'org)
+     (define-key global-map "\C-cl" 'org-store-link)
+     (define-key global-map "\C-ca" 'org-agenda)
+     (setq org-log-done t)
+     (setq org-todo-keywords '((sequence "TODO" "INPROGRESS" "DONE")))
+   #+END_SRC
+* Organization
+  Add org files to global agenda.
+  #+BEGIN_SRC emacs-lisp
+    (setq org-agenda-files (list "~/Dropbox/TODO.org"
+                                 "~/Dropbox/org/work.org"
+                                 "~/Dropbox/org/school.org"
+                                 "~/Dropbox/org/exercise.org"
+                                 "~/Dropbox/org/home.org"))
+  #+END_SRC
+* Display Preferences
+** Add pretty UTF-8 styled asterisks
+  #+BEGIN_SRC emacs-lisp
+    (require 'org-bullets)
+    (add-hook 'org-mode-hook
+              (lambda ()
+                (org-bullets-mode 1)))
+  #+END_SRC
+
+** Fringe settings
+   Remove right-hand fringe to save previous room
+   #+BEGIN_SRC emacs-lisp
+     (fringe-mode '(8 . 0))
+   #+END_SRC
+
+** Fill settings
+   Enable auto-fill mode and set fill width.
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'text-mode-hook 'turn-on-auto-fill)
+     (setq-default fill-column 80)
+   #+END_SRC
+
+** Disable auto-save and backups
+   Backup files are annoying and not useful to me, so disable them.
+   #+BEGIN_SRC emacs-lisp
+     (setq backup-inhibited t)
+     (setq auto-save-default nil)
+   #+END_SRC
+
+** Show column numbers
+   I always want to see column numbers
+   #+BEGIN_SRC emacs-lisp
+        (setq column-number-mode t)
+   #+END_SRC
+** Workgroups
+   Workgroups allows persistent window configurations to be saved to disk and
+   loaded on start up. Set the prefix key.
+   *LINK:* [[https://github.com/tlh/workgroups.el][workgroups]]
+   #+BEGIN_SRC emacs-lisp
+     (require 'workgroups)
+     (setq wg-prefix-key (kbd "C-c w"))
+     (wg-load "~/.emacs.d/packages/saved_workgroups")
+     (workgroups-mode 1)
+   #+END_SRC
+* User Defined Functions
+** Edit files as sudo
+   Open file as root for editing and set key binding.
+   #+BEGIN_SRC emacs-lisp
+     (defun sudo-edit (&optional arg)
+
+       (interactive "P")
+       (if (or arg (not buffer-file-name))
+           (find-file (concat "/sudo:root@localhost:"
+                              (ido-read-file-name "Find file(as root): ")))
+         (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+     (global-set-key (kbd "C-x C-r") 'sudo-edit)
+   #+END_SRC
+* Initialization
+** Open to default buffer
+   Automatically open a todo org document on startup
+   #+BEGIN_SRC emacs-lisp
+     (find-file "~/Dropbox/TODO.org")
+   #+END_SRC
